@@ -21,4 +21,4 @@ if [ -f Projectfile ]; then
 fi
 
 echo "-----> Compiling app.cr"
-$CRYSTAL_DIR/bin/crystal build app.cr --release
+$CRYSTAL_DIR/bin/crystal build --release --link-flags "-l:/tmp/crystal/embedded/lib/libatomic_ops.a -l:/tmp/crystal/embedded/lib/libatomic_ops_gpl.a -l:/tmp/crystal/embedded/lib/libcord.a -l:/tmp/crystal/embedded/lib/libevent.a -l:/tmp/crystal/embedded/lib/libevent_core.a -l:/tmp/crystal/embedded/lib/libevent_extra.a -l:/tmp/crystal/embedded/lib/libevent_openssl.a -l:/tmp/crystal/embedded/lib/libevent_pthreads.a -l:/tmp/crystal/embedded/lib/libgc.a -l:/tmp/crystal/embedded/lib/libpcl.a -l:/tmp/crystal/embedded/lib/libpcre.a -l:/tmp/crystal/embedded/lib/libpcrecpp.a -l:/tmp/crystal/embedded/lib/libpcreposix.a -l:/tmp/crystal/embedded/lib/libunwind.a -l:/tmp/crystal/embedded/lib/libunwind-coredump.a -l:/tmp/crystal/embedded/lib/libunwind-generic.a -l:/tmp/crystal/embedded/lib/libunwind-ptrace.a -l:/tmp/crystal/embedded/lib/libunwind-setjmp.a -l:/tmp/crystal/embedded/lib/libunwind-x86_64.a" app.cr
