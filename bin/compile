@@ -1,9 +1,26 @@
 #!/bin/bash
 
+# YAML parser from https://gist.github.com/pkuczynski/8665367
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-CRYSTAL_URL="https://github.com/manastech/crystal/releases/download/0.11.1/crystal-0.11.1-1-linux-x86_64.tar.gz"
+CRYSTAL_URL="https://github.com/manastech/crystal/releases/download/0.12.0/crystal-0.12.0-1-linux-x86_64.tar.gz"
 CRYSTAL_DIR=/tmp/crystal
 unset GIT_DIR
 
@@ -18,7 +35,17 @@ cd $BUILD_DIR
 if [ -f shard.yml ]; then
   echo "-----> Installing Dependencies"
   $CRYSTAL_DIR/bin/crystal deps
+
+  if [ -f app.cr ]; then
+    echo "-----> Compiling app.cr (using old behaviour, app.cr exists - ignoring shard.yml)"
+    $CRYSTAL_DIR/bin/crystal build app.cr --release
+  else
+    eval $(parse_yaml shard.yml "shard_")
+    echo "-----> Compiling src/${shard_name}.cr (auto-detected from shard.yml)"
+    $CRYSTAL_DIR/bin/crystal build src/${shard_name}.cr --release -o app
+  fi
+else
+  echo "-----> Compiling app.cr (create shard.yml to override, learn more: https://github.com/ysbaddaden/shards)"
+  $CRYSTAL_DIR/bin/crystal build app.cr --release
 fi
 
-echo "-----> Compiling app.cr"
-$CRYSTAL_DIR/bin/crystal build app.cr --release
