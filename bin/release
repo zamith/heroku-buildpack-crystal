@@ -1,8 +1,16 @@
 #!/bin/sh
+EXEC_FILE=""
+for f in *
+do
+  if [ -x "$f" ] && file "$f" | grep -q "ELF"
+  then
+    EXEC_FILE=$f
+  fi
+done
 
 cat << EOF
 ---
 addons:
 default_process_types:
-  web: ./app --port \$PORT
+  web: ./\$EXEC_FILE --port \$PORT
 EOF
