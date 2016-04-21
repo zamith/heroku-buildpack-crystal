@@ -3,5 +3,5 @@ cat << EOF
 ---
 addons:
 default_process_types:
-  web: for f in *; do if [ -x "$f" ] && file "$f" | grep -q "ELF"; then ./$f --port \$PORT; fi done 
+  web: for f in *; do if [ -x "\$f" ] && file "\$f" | grep -q "ELF"; then ./\$f --port \$PORT; fi done 
 EOF
