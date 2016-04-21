@@ -1,16 +1,7 @@
 #!/bin/sh
-EXEC_FILE=""
-for f in *
-do
-  if [ -x "$f" ] && file "$f" | grep -q "ELF"
-  then
-    EXEC_FILE=$f
-  fi
-done
-
 cat << EOF
 ---
 addons:
 default_process_types:
-  web: ./\$EXEC_FILE --port \$PORT
+  web: for f in *; do if [ -x "$f" ] && file "$f" | grep -q "Mach-O"; then ./$f --port \$PORT; fi done 
 EOF
