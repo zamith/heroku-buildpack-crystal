@@ -20,5 +20,5 @@ if [ -f shard.yml ]; then
   $CRYSTAL_DIR/bin/crystal deps
 fi
 
-echo "-----> Compiling app.cr"
-$CRYSTAL_DIR/bin/crystal build app.cr --release
+echo "-----> Compiling the app"
+$CRYSTAL_DIR/bin/crystal build *.cr --release
